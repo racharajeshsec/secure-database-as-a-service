@@ -1,74 +1,97 @@
 # Secure Database-as-a-Service (DBaaS)
 
-## 📌 Overview
-This project provides for the design, implementation and evaluation of a **secure database-as-a-service (DBaaS)** solution for storing and querying healthcare data in a **semi-trusted cloud environment**. The system safeguards against a curious or malicious cloud provider but allows authorized users to make useful queries.
 
 ---
 
-##  Threat Model
-- The cloud/database server is **semi-trusted**  
-- The cloud obeys protocol but may try and infer sensitive information  
-- Users are authenticated clients  
-- All sensitive fields must remain confidential from the cloud  
+## Overview
+This project implements a **secure Database-as-a-Service (DBaaS)** system for storing and querying healthcare data in a **semi-trusted cloud environment**.
+
+The system ensures that sensitive information remains confidential from the cloud provider while still supporting authorized queries.
+
+---
+
+## Threat Model
+- The cloud/database server is **semi-trusted**
+- The cloud follows the protocol but may attempt to infer sensitive data
+- All cryptographic operations are performed client-side
 
 ---
 
 ##  System Architecture
-- Client-side application handles:  
-  - Authentication  
-  - Encryption / decryption  
-  - Integrity & completeness verification  
-- Cloud-side database stores:  
-  - Encrypted sensitive fields  
-  - Integrity metadata  
-  - Non-sensitive attributes in plaintext  
+- Client:
+  - User authentication
+  - Encryption / decryption
+  - Query integrity & completeness verification
+- Cloud Database:
+  - Stores encrypted sensitive attributes
+  - Executes SQL queries without access to plaintext data
 
 
 ---
 
-##  Security Features Implemented
+##  Security Features
 
-### 1. User Authentication
-- Username/password-based authentication  
-- Passwords are **hashed** (no plaintext storage)  
-- Custom authentication logic (not DB-native auth)  
+### User Authentication
+- Custom username/password authentication
+- Secure password hashing
+- No plaintext password storage
 
-### 2. Role-Based Access Control
-- **Group H:** Full access (read + insert)  
-- **Group R:** Read-only, restricted attributes  
-- First name & last name hidden from Group R  
+### Role-Based Access Control
+- **Group H:** Full read/write access
+- **Group R:** Read-only access with restricted attributes
+- Unauthorized fields are filtered before results are returned
 
-### 3. Data Confidentiality
-- Sensitive fields:  
-  - `gender`  
-  - `age`  
-- Encrypted before storage using symmetric encryption  
-- Cloud never sees plaintext values  
-- Encryption prevents statistical leakage  
+### Data Confidentiality
+- Sensitive attributes (`gender`, `age`) are encrypted before storage
+- Encryption prevents both direct disclosure and statistical leakage
 
-### 4. Query Integrity Protection
-- Each data record includes a cryptographic integrity tag  
-- Clients verify returned records to detect tampering or forgery  
-- Works for both Group H and Group R users  
+### Query Integrity Protection
+- Cryptographic integrity tags allow detection of tampered or forged records
 
-### 5. Query Completeness Verification
-- Detects missing records in query results  
-- Uses probabilistic verification techniques  
+### Query Completeness Verification
+- Detects missing records in query results with high probability
 
 ---
 
-##  Extra Credit: Order Preserving Encryption (OPE)
-- Applied Order Preserving Encryption to `weight`  
-- Enables secure range queries (e.g., 60kg–80kg)  
-- Preserves order without revealing exact values  
+## 🛠️ Tech Stack
+- Python
+- MySQL
+- Cryptography libraries
+- Git / GitHub
+
+---
+
+## 📁 Repository Structure
+
+secure-database-as-a-service/
+├── auth/
+├── access_control/
+├── security/
+├── queries/
+├── database/
+├── extra/
+├── docs/
+├── tests/
+├── requirements.txt
+└── README.md
 
 
 ---
 
-## 🛠️ Technology Stack
-- **Language:** Python  
-- **Database:** MySQL  
-- **Crypto:** Python Cryptography libraries  
-- **Version Control:** Git / GitHub  
+## 🚀 How to Run
 
----
+1. Install dependencies:
+```
+pip install -r requirements.txt
+```
+
+2. Initialize database:
+```
+mysql < database/schema.sql
+mysql < database/seed_data.sql
+```
+
+3. Run client:
+```
+python queries/query_interface.py
+```
